@@ -1,0 +1,104 @@
+
+server:
+  port: 10075
+  forward-headers-strategy: framework
+
+
+spring:
+  application:
+    name: lll-gateway
+
+  config:
+    import:
+    - nacos:lll-gateway.yml?group=gateway
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.100:8848
+        namespace: lll-dev
+      config:
+        server-addr: 192.168.1.100:8848
+        namespace: lll-dev
+    gateway:
+      forwarded:
+        enabled: true
+      routes:
+        #          dmhy-anime服务
+        - id: dmhy-anime
+          uri: lb://dmhy-anime
+          predicates:
+            - Path=/api/dmhy/anime/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - TokenRelay
+
+        #          第三方服务
+        - id: lll-user
+          uri: lb://lll-user
+          predicates:
+            - Path=/api/lll/user/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - TokenRelay
+
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          oidc-client:
+            client-id: "oidc-client"
+            client-secret: "secret"
+            #            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://home.lll44556.top/login/oauth2/code/oidc-client"
+            scope:
+              - openid
+              - profile
+            provider: sas
+        provider:
+          sas:
+            # 授权服务器地址
+            authorization-uri: http://auth.lll44556.top/api/oauth2/authorize
+            # 访问令牌地址
+            token-uri: http://auth.lll44556.top/api/oauth2/token
+            jwk-set-uri: http://auth.lll44556.top/api/oauth2/jwks
+
+
+
+  session:
+    # 这个配置不加，也会自动使用redis进行session存储
+    timeout: 24h
+  # 首先，spring session的官方注解应该是redis，但是spring boot项目中，已经和spring data进行了统一，都采用data.redis
+#  redis:
+#    host: 192.168.1.100
+#    port: 6666
+
+  data:
+    redis:
+      host: 192.168.1.100
+      port: 10010
+      timeout: 1s
+
+
+# 监视端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans,configprops,health,info,sessions  # 需要啥加啥
+  endpoint:
+    health:
+      show-details: always
+    configprops:
+      show-values: always
+    env:
+      show-values: always
+  # 可选：单独管理端口，避免和业务端口混在一起
+  server:
+    port: 10099
+
+
+
