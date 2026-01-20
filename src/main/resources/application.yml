@@ -83,22 +83,22 @@ spring:
       timeout: 1s
 
 
-# 监视端点
-management:
-  endpoints:
-    web:
-      exposure:
-        include: beans,configprops,health,info,sessions  # 需要啥加啥
-  endpoint:
-    health:
-      show-details: always
-    configprops:
-      show-values: always
-    env:
-      show-values: always
-  # 可选：单独管理端口，避免和业务端口混在一起
-  server:
-    port: 10099
+## 监视端点
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: beans,configprops,health,info,sessions  # 需要啥加啥
+#  endpoint:
+#    health:
+#      show-details: always
+#    configprops:
+#      show-values: always
+#    env:
+#      show-values: always
+#  # 可选：单独管理端口，避免和业务端口混在一起
+#  server:
+#    port: 10099
 
 
 
