@@ -16,7 +16,7 @@ WORKDIR /app
 COPY target/*.jar app.jar
 
 # Spring Boot 默认 8080，如果你项目不是 8080，就改这里（只是声明，不影响实际监听）
-EXPOSE 8080
+EXPOSE 10075
 
 # JVM 参数可以通过环境变量追加：JAVA_OPTS
 # 例如：-Xms256m -Xmx512m 等
